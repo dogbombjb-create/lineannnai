@@ -260,7 +260,7 @@
       </div>
 
       <div class="what__kit js-fade">
-        <div class="what__kit-photo">
+        <div class="what__kit-photo" id="modal-trigger">
           <img src="images/starterset.webp" alt="スターターキット" loading="lazy">
         </div>
         <div class="what__kit-body">
@@ -402,6 +402,14 @@
     <p>© 2026 Ecole Sucre. All Rights Reserved.</p>
   </footer>
 
+  <!-- Modal -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal-content">
+      <button class="modal-close" id="modal-close" aria-label="閉じる">&times;</button>
+      <div id="modal-video-container"></div>
+    </div>
+  </div>
+
   <script>
     // Scroll fade-in
     const io = new IntersectionObserver((entries) => {
@@ -415,7 +423,46 @@
     window.addEventListener('load', () => {
       document.querySelectorAll('.fade-up').forEach(el => el.classList.add('visible'));
     });
+
+    // Modal Logic
+    document.addEventListener('DOMContentLoaded', () => {
+      const trigger = document.getElementById('modal-trigger');
+      const overlay = document.getElementById('modal-overlay');
+      const closeBtn = document.getElementById('modal-close');
+      const container = document.getElementById('modal-video-container');
+      const videoHtml = `
+        <div style="position:relative;aspect-ratio:9/16;">
+          <iframe
+            loading="lazy" title="Gumlet video player"
+            src="https://play.gumlet.io/embed/691fd0de55e54fac094caf0a?background=false&autoplay=1&loop=0&disable_player_controls=0"
+            style="border:none; position: absolute; top: 0; left: 0; height: 100%; width: 100%;"
+            referrerpolicy="origin"
+            allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture; fullscreen;clipboard-write;">
+          </iframe>
+        </div>
+      `;
+
+      if (trigger && overlay && closeBtn && container) {
+        trigger.addEventListener('click', () => {
+          container.innerHTML = videoHtml;
+          overlay.classList.add('is-active');
+          document.body.style.overflow = 'hidden';
+        });
+
+        const closeModal = () => {
+          overlay.classList.remove('is-active');
+          setTimeout(() => { container.innerHTML = ''; }, 400);
+          document.body.style.overflow = '';
+        };
+
+        closeBtn.addEventListener('click', closeModal);
+        overlay.addEventListener('click', (e) => {
+          if (e.target === overlay) closeModal();
+        });
+      }
+    });
   </script>
+
 </body>
 
 </html>
